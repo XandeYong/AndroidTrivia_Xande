@@ -17,19 +17,29 @@
 package com.example.android.guesstheword.screens.score
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.example.android.guesstheword.R
 import com.example.android.guesstheword.databinding.ScoreFragmentBinding
+import com.example.android.guesstheword.screens.game.GameViewModel
+import kotlinx.android.synthetic.main.main_activity.*
 
 /**
  * Fragment where the final score is shown, after the game is over
  */
 class ScoreFragment : Fragment() {
+
+    private lateinit var viewModel: ScoreViewModel
+
+    private val args: ScoreFragmentArgs by navArgs()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -45,6 +55,19 @@ class ScoreFragment : Fragment() {
                 false
         )
 
+        Log.i("ScoreViewModel", "Called ViewModelProvider.get")
+        viewModel = ViewModelProvider(this).get(ScoreViewModel::class.java)
+        viewModel.score = args.score
+
+        binding.scoreText.text = viewModel.score.toString()
+        binding.playAgainButton.setOnClickListener { onPlayAgain() }
+
         return binding.root
     }
+
+    fun onPlayAgain() {
+        val action = ScoreFragmentDirections.actionRestart()
+        NavHostFragment.findNavController(this).navigate(action)
+    }
+
 }
